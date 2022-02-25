@@ -14,9 +14,10 @@ version: "3.9"
 
 services:
   db:
+    container_name: db
     image: postgres:13.1-alpine
     volumes:
-      - erupe-db-data:/var/lib/postgresql/data
+      - ./data/db:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=${POSTGRES_USERNAME}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -43,9 +44,11 @@ services:
   server_services:
     build: .
     volumes:
-      - erupe-server:/app/erupe
+      - ./data/backup:/backup
+      - ./bin:/app/erupe/bin
+      # - ./www:/app/erupe/www
     ports:
-      - "80:80"
+      - "46380:80"
       - "53312:53312"
       - "54001:54001"
       - "53310:53310"
@@ -58,9 +61,3 @@ services:
 
 networks:
   backend:
-
-
-volumes:
-  erupe-db-data:
-  erupe-server:
-  

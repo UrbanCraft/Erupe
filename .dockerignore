@@ -5,3 +5,5 @@ savedata/
 www/tw/
 www/jp/
 *.bat
+data/
+bin/
