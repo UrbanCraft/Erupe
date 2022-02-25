@@ -1,4 +1,6 @@
-FROM golang:1.15.7-alpine3.13
+FROM golang:1.16-alpine
+
+RUN apk add --no-cache git
 
 ENV GO111MODULE=on
 
@@ -10,5 +12,7 @@ COPY go.sum .
 RUN go mod download
 
 COPY . .
+
+#RUN go build .
 
 CMD [ "go", "run", "." ]
