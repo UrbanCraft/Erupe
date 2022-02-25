@@ -34,7 +34,7 @@ html,body {
     border-color: rgba(0,0,0,0);
 }
 
-#icon_weapon {
+.icon_weapon {
     position: relative;
 	top:1px;
     left: 10px;
@@ -42,7 +42,7 @@ html,body {
     height: 48px;
 }
 
-#weapon_title {
+.weapon_title {
 	position: relative;
     left: 70px;
     bottom: 46px;
@@ -51,7 +51,7 @@ html,body {
     font-size: 16px;
 }
 
-#weapon_name {
+.weapon_name {
 	text-align: center;
 	position: relative;
     left: 66px;
@@ -61,35 +61,35 @@ html,body {
     font-weight: bold;
 }
 
-#hr_lvl {
+.hr_lvl {
 	position: relative;
     bottom: 97px;
     left: 225px;
     width: 50px;
 }
 
-#gr_lvl {
+.gr_lvl {
     position: relative;
     bottom: 116.5px;
     left: 270px;
     width: 50px;
 }
 
-#sex{
+.sex{
     position: relative;
     bottom: 136px;
     left: 315px;
     width: 14px;
 }
 
-#uid {
+.uid {
     position: relative;
     bottom: 140px;
     left: 225px;
     width: 135px;
 }
 
-#lastlogin {
+.lastlogin {
 	display: block;
     width: 200px;
     position: relative;

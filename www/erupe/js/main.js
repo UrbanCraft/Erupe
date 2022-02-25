@@ -1,79 +1,106 @@
 // Helper function to dynamically create Winsock alert box
 function createWinsockAlert(message) {
-	var tmpDiv = $('<div/>')
-   	.attr("class", "WinsockAlertBoxID")
-    .attr("role", "alert")
-    .addClass("alert alert-info")    
-    tmpDiv.append(message);  
-	$("#alertBox").append(tmpDiv);
-	scrollToBottom();
+    var tmpDiv = document.createElement("div");
+
+    tmpDiv.setAttribute("class", "WinsockAlertBoxID");
+    tmpDiv.setAttribute("role", "alert");
+    tmpDiv.className = "alert alert-info";
+    tmpDiv.appendChild(document.createTextNode(message));
+
+    document.getElementById("alertBox").appendChild(tmpDiv);
+
+    scrollToBottom();
 }
 
 // Helper function to dynamically create normal alert box
 function createNormalAlert(message) {
-	var tmpDiv = $('<div/>')
-   	.attr("class", "NormalAlertBoxID")
-    .attr("role", "alert")
-    .addClass("alert alert-secondary")    
-    tmpDiv.append(message);  
-	$("#alertBox").append(tmpDiv);
+	var tmpDiv = document.createElement("div");
+
+    tmpDiv.setAttribute("class", "NormalAlertBoxID");
+    tmpDiv.setAttribute("role", "alert");
+    tmpDiv.className = "alert alert-secondary";
+    tmpDiv.appendChild(document.createTextNode(message));
+
+    document.getElementById("alertBox").appendChild(tmpDiv);
+
 	scrollToBottom();
 }
 
 // Helper function to dynamically create good alert box
 function createGoodAlert(message) {
-	var tmpDiv = $('<div/>')
-   	.attr("class", "GoodAlertBoxID")
-    .attr("role", "alert")
-    .addClass("alert alert-success")    
-    tmpDiv.append(message);  
-	$("#alertBox").append(tmpDiv);
+	var tmpDiv = document.createElement("div");
+
+    tmpDiv.setAttribute("class", "GoodAlertBoxID");
+    tmpDiv.setAttribute("role", "alert");
+    tmpDiv.className = "alert alert-success";
+    tmpDiv.appendChild(document.createTextNode(message));
+
+    document.getElementById("alertBox").appendChild(tmpDiv);
+
 	scrollToBottom();
 }
 
 
 function createErrorAlert(message) {
-    var tmpDiv = $('<div/>')
-	.attr("class", "ErrorAlertBoxID")
-    .attr("role", "alert")
-    .addClass("alert alert-danger")
-    tmpDiv.append(message);  
-	$("#alertBox").append(tmpDiv);
+    var tmpDiv = document.createElement("div");
+
+	tmpDiv.setAttribute("class", "ErrorAlertBoxID");
+    tmpDiv.setAttribute("role", "alert");
+    tmpDiv.className = "alert alert-danger";
+    tmpDiv.appendChild(document.createTextNode(message));  
+
+    document.getElementById("alertBox").appendChild(tmpDiv);
+
 	scrollToBottom();
 }
 
 function scrollToBottom() {
-	const messages = document.getElementById('alertBox');
+	var messages = document.getElementById('alertBox');
 	if (messages != null)
 		messages.scrollTop = messages.scrollHeight;
 }
 
-$(function() {
-    $("#configButton").click(function(){
+function init_main() {
+    window.external.beginDrag(false);
+    document.getElementById("configButton").onclick = function(){
         try{
             window.external.openMhlConfig();
         } catch(e){
             createErrorAlert("Error on openMhlConfig: " + e);
         }
-    });
-});
+    };
 
-$(function() {
-    $("#titlebar").on("click", function(e) {
+    document.getElementById("titlebar").onmouseenter = function(e) {
         window.external.beginDrag(true);
-    });
-    $("#exit").on("click", function(e) {
+    };
+
+    document.getElementById("titlebar").onmouseleave = function(e) {
+        window.external.beginDrag(false);
+    };
+
+    document.getElementById("exit").onclick = function(e) {
         window.external.closeWindow();
-    });
-	$("#Reduce").on("click", function(e) {
+    };
+
+	document.getElementById("Reduce").onclick = function(e) {
         window.external.minimizeWindow();
-	});
-    $(window).on("message onmessage", function(e) {
-        var data = e.originalEvent.data;
+	};
+
+    var attachEvent;
+    if (typeof window.addEventListener !== "undefined") {
+        attachEvent = window.addEventListener;
+    } else {
+        attachEvent = window.attachEvent;
+    }
+    attachEvent("message", function(e) {
+        //alert(e);
+        var data = e.data;
 		CheckMessage(data);
     });
+
     doLauncherInitalize();
-});
+};
+
 
 function CheckMessage(message){
 	// Good Alert
@@ -111,14 +138,14 @@ function doLauncherInitalize() {
     if(serverListXml == ""){
         createErrorAlert("Got empty serverlist.xml!");
     }
-    console.log(serverListXml);
+    if (typeof console !== "undefined") {console.log(serverListXml);}
 
     try{
         var lastServerIndex = window.external.getIniLastServerIndex();
     } catch(e){
         createErrorAlert("Error on getIniLastServerIndex: " + e + ".");
     }
-    console.log("Last server index:" + lastServerIndex);
+    if (typeof console !== "undefined") {console.log("Last server index:" + lastServerIndex);}
 
     try{
         window.external.setIniLastServerIndex(0);
@@ -131,21 +158,21 @@ function doLauncherInitalize() {
     } catch(e){
         createErrorAlert("Error on getMhfBootMode: " + e + ".");
     }
-    console.log("mhfBootMode:" + mhfBootMode);
+    if (typeof console !== "undefined") {console.log("mhfBootMode:" + mhfBootMode);}
 
-    try{
+    try{12
         var userId = window.external.getUserId();
     } catch(e){
         createErrorAlert("Error on getUserId: " + e + ".");
     }
-    console.log("userId:" + userId);
+    if (typeof console !== "undefined") {console.log("userId:" + userId);}
 
     try{
         var password = window.external.getPassword();
     } catch(e){
         createErrorAlert("Error on getPassword: " + e + ".");
     }
-    console.log("password:" + password);
+    if (typeof console !== "undefined") {console.log("password:" + password);}
 }	
 	
 	

@@ -2,13 +2,13 @@ var userNameSaved = localStorage.getItem('pseudo');
 var passwordSaved = localStorage.getItem('pswd');
 var checkBoxSaved = localStorage.getItem('svAccount');
 
-if (userNameSaved != "null"){
+if (typeof userNameSaved != "null"){
 	document.getElementById("username").value = userNameSaved;
 }
-if (passwordSaved != "null"){
+if (typeof passwordSaved != "null"){
 	document.getElementById("password").value = passwordSaved;
 }
-if (checkBoxSaved != "null"){
+if (typeof checkBoxSaved != "null"){
 	if (checkBoxSaved == "true"){
 		var checkBox = document.getElementById("saveAccount");
 		checkBox.checked = true;
