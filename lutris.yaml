@@ -1,0 +1,76 @@
+name: Monster Hunter Frontier ZZ
+game_slug: mhfo
+version: Zip
+slug: mhfo-zip
+runner: wine
+
+script:
+  system:
+    env:
+      LC_ALL: ja_JP.UTF-8
+      LANG: ja_JP.UTF-8
+
+  game:
+    exe: $GAMEDIR/python/python.exe
+    args: no_gg_jp.py
+    prefix: $GAMEDIR/prefix
+    arch: win32
+    working_dir: $GAMEDIR/mhfo
+
+  files:
+    - game_archive: "N/A:Select game zip"
+    - python_installer: https://www.python.org/ftp/python/3.9.10/python-3.9.10.exe
+
+  installer:
+    # Python
+    - task:
+        name: wineexec
+        arch: win32
+        executable: python_installer
+        args: /passive InstallAllUsers=1 Shortcuts=0 Include_pip=1 TargetDir=$GAMEDIR/python
+        prefix: $GAMEDIR/prefix
+
+    # pip & wheel
+    - task:
+        name: wineexec
+        arch: win32
+        executable: $GAMEDIR/python/python.exe
+        args: -m pip install --upgrade pip wheel
+        prefix: $GAMEDIR/prefix
+
+    # Game Python dependencies
+    - task:
+        name: wineexec
+        arch: win32
+        executable: $GAMEDIR/python/python.exe
+        args: -m pip install pypiwin32 frida psutil
+        prefix: $GAMEDIR/prefix
+
+    # Internet Explorer
+    - task:
+        name: winetricks
+        app: ie8
+        silent: true
+    - task:
+        name: winetricks
+        app: ie8_kb2936068
+        silent: true
+
+    # Fonts
+    - task:
+        name: winetricks
+        app: allfonts
+        silent: true
+
+    # Game files
+    - extract:
+        file: game_archive
+        dst: $GAMEDIR/mhfo
+
+  #wine:
+  #  Desktop: true
+  #overrides:
+  #  ddraw.dll: n
+  #system:
+  #  env:
+  #    SOMEENV: true
