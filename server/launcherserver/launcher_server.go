@@ -56,9 +56,9 @@ func (s *Server) Start() error {
 
 	// Change the launcher HTML routes if we are using the custom launcher instead of the original.
 	if s.useOriginalLauncherFiles {
-		s.setupOriginalLauncherRotues(r)
+		s.setupOriginalLauncherRoutes(r)
 	} else {
-		s.setupCustomLauncherRotues(r)
+		s.setupCustomLauncherRoutes(r)
 	}
 
 	s.httpServer.Addr = fmt.Sprintf(":%d", s.erupeConfig.Launcher.Port)

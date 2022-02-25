@@ -1,8 +1,13 @@
+Feel free to contribute, make pull requests, open issues, etc. 
+
+Please be respectful of peoples wishes. 
+
 # Erupe
-## WARNING 
 This project is in its infancy and has no reliable active developer, no documentation, and no support.
 
 This project has been solely developed in my spare time for the educational experience of making a server emulator, which I haven't done before. Expectations regarding functionally and code quality should be set accordingly.
+
+[See original README here](./docs/ErupeServer.README.md)
 
 # General info
 Currently allows a JP MHF client (with GameGuard removed) to:
@@ -29,65 +34,47 @@ Currently allows a JP MHF client (with GameGuard removed) to:
     ```
     > go get -tags 'postgres' -u github.com/golang-migrate/migrate/v4/cmd/migrate/
 
-    > set POSTGRESQL_URL=postgres://postgres:password@localhost:5432/erupe?sslmode=disable
+## General
+**WARNING:** All current features can be assumed to be very limited or buggy.
 
-    > cd erupe
+Currently allows a JP MHF client (with GameGuard removed) to:
+- Login and register an account (registration is automatic if account doesn't exist).
+- Create a character.
+- Get ingame to the main city.
+- See other players walk around.
+- Do quests:
+    - Only quests shipped with the game are on the counter.
+    - **Requires binary quest files not in the repository.**
+- Use (local) chat.
+- Partial guild support.
 
-    > migrate -database %POSTGRESQL_URL% -path migrations up
-    ```
+## Useful Resources
+- [Erupe Server](https://github.com/ricochhet/Erupe)
+- [Progression files](https://archive.org/details/mhfz_progression)
 
-    Linux:
-    ```
-    > go get -tags 'postgres' -u github.com/golang-migrate/migrate/v4/cmd/migrate/
+## Server Setup Guide
+The erupe server is still heavily in development and you should expect numerous bugs, crashes, and other unintended behavior during use.
 
-    > export POSTGRESQL_URL=postgres://postgres:password@localhost:5432/erupe?sslmode=disable
+Really take a moment to figure out *why* you want to do this setup, and if you're capable enough *to* do it. This guide tries to make everything as simple as possible, but will still require a fairly good understanding of how computers operate. 
 
-    > cd erupe
+This server is *experimental*, many bugs, crashes, and other unintended behavior ***WILL*** occur. This is not suited for gameplay, you can *play* the game, but keep in mind the above. This is primarily for development and research purposes. 
 
-    > migrate -database $POSTGRESQL_URL -path migrations up
-    ```
+The Server is written in Go, so it basically should support any Operating system that can run golang and golang-migrate as well as postgres for the database-server. Here are a few Guides to help get you started on some different Operating Systems. If you feel like we miss an important OS feel free to add a Guide via Pull Request.
 
-    (Replacing `postgres:password` with your postgres username and password)
+- [Guide to Install Server Side on Windows (10)](./docs/Windows-Server-Install.md)
+- [Guide to Install Server Side on Ubuntu](./docs/Ubuntu-Server-Install.md)
+- [Guide to Install Server Side on Arch Linux](./docs/Arch-Server-Install.md)
 
-5. Edit the config.json
+## Client Setup Guide
 
-    Namely:
-    * Update the database username and password
-    * Update the `host_ip` and `ip` fields (there are multiple) to your external IP if you are hosting for multiple clients.
+The Monster Hunter Frontier Client heavily relies on Internet Explorer to work properly. So getting it to run on Linux might not be possible at all. If you have some idea how to maybe get it working on Linux as well please get in touch. For now the Client only works on Windows. Here is the Guide on how to set it up:
 
-6. Place quest/scenario binaries.
+- [Guide to install the MHF Client on Windows (10)](./docs/Windows-Client-Install.md)
 
-    The quest and scenario binary files should be placed in `bin/quests/` and `bin/scenarios` respectively.
+## Troubleshooting
 
-## Launcher
-Erupe ships with a rudimentary custom launcher, so you don't need to obtain the original TW/JP files to simply get ingame. However, it does still support using the original files if you choose to. To set this up, place a copy of the original launcher html/js/css in `./www/tw/`, and `/www/jp/` for the TW and JP files respectively.
-
-Then, modify the the `/launcher/js/launcher.js` file as such:
-* Find the call to `startUpdateProcess();` in a case statement and replace it with `finishUpdateProcess();`. (This disables the file check and updating)
-* (JP ONLY): replace all uses of "https://" with "http://" in the file.
-
-Finally, edit the config.json and set `UseOriginalLauncherFiles` to `true` under the launcher settings.
-
-# Usage
-### Note: If you are switching to/from the custom launcher html, you will have to clear your IE cache @ `C:\Users\<user>\AppData\Local\Microsoft\Windows\INetCache`.
-
-## Server
-```
-cd Erupe
-go run .
-```
-**Note**: If you experience port-binding issues and have Hyper-V/wsl2 installed, please see [this issue](https://github.com/Andoryuuta/Erupe/issues/34).
-
-## Client
-Add to hosts:
-```
-127.0.0.1 mhfg.capcom.com.tw
-127.0.0.1 mhf-n.capcom.com.tw
-127.0.0.1 cog-members.mhf-z.jp
-127.0.0.1 www.capcom-onlinegames.jp
-127.0.0.1 srv-mhf.capcom-networks.jp
-```
-
-Run mhf.exe normally (with locale emulator or appropriate timezone).
-
-**Note**: If you are switching to/from the custom launcher html, you will have to clear your IE cache @ `C:\Users\<user>\AppData\Local\Microsoft\Windows\INetCache`.
+There are some common problems which can occur while trying to setup either the Server Side or the Client Side of this. If you run into a problem please refer to the [Troubleshooting-Section](./docs/Troubleshooting.md) of the documentation. It lists some common solutions. If you have a fix that is not listed there yet, please feel free to send a pull request.
+s
+## Credits
+- [Erupe Contributors](https://github.com/ErupeServer/Erupe)
+- [theBusBoy](https://github.com/theBusBoy)

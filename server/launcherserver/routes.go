@@ -52,7 +52,7 @@ func (s *Server) setupServerlistRoutes(r *mux.Router) {
 	jpServerList.Handle("/serverlist.xml", ServerHandlerFunc{s, serverList})
 }
 
-func (s *Server) setupOriginalLauncherRotues(r *mux.Router) {
+func (s *Server) setupOriginalLauncherRoutes(r *mux.Router) {
 	// TW
 	twMain := r.Host("mhfg.capcom.com.tw").Subrouter()
 	twMain.PathPrefix("/").Handler(http.FileServer(http.Dir("./www/tw/")))
@@ -68,7 +68,7 @@ func (s *Server) setupOriginalLauncherRotues(r *mux.Router) {
 
 }
 
-func (s *Server) setupCustomLauncherRotues(r *mux.Router) {
+func (s *Server) setupCustomLauncherRoutes(r *mux.Router) {
 	// TW
 	twMain := r.Host("mhfg.capcom.com.tw").Subrouter()
 	twMain.PathPrefix("/g6_launcher/").Handler(http.StripPrefix("/g6_launcher/", http.FileServer(http.Dir("./www/erupe/"))))

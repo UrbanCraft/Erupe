@@ -92,6 +92,7 @@ func (s *Session) handleDSGNRequest(bf *byteframe.ByteFrame) error {
 	)
 	err := s.server.db.QueryRow("SELECT id, password FROM users WHERE username = $1", reqUsername).Scan(&id, &password)
 	var serverRespBytes []byte
+
 	switch {
 	case err == sql.ErrNoRows:
 		s.logger.Info("Account not found", zap.String("reqUsername", reqUsername))
@@ -128,7 +129,6 @@ func (s *Session) handleDSGNRequest(bf *byteframe.ByteFrame) error {
 			s.logger.Info("Passwords don't match!")
 			serverRespBytes = makeSignInFailureResp(SIGN_EPASS)
 		}
-
 	}
 
 	err = s.cryptConn.SendPacket(serverRespBytes)
