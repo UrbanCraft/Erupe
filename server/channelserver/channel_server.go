@@ -5,12 +5,12 @@ import (
 	"net"
 	"sync"
 
+	"github.com/Andoryuuta/byteframe"
 	"github.com/Andoryuuta/Erupe/config"
 	"github.com/Andoryuuta/Erupe/network/binpacket"
 	"github.com/Andoryuuta/Erupe/network/mhfpacket"
-	"github.com/Andoryuuta/byteframe"
+	"github.com/bwmarrin/discordgo"
 	"github.com/jmoiron/sqlx"
-	"github.com/matterbridge/discordgo"
 	"go.uber.org/zap"
 )
 
@@ -43,8 +43,13 @@ type Server struct {
 	stagesLock sync.RWMutex
 	stages     map[string]*Stage
 
+	// UserBinary
 	userBinaryPartsLock sync.RWMutex
 	userBinaryParts     map[userBinaryPartID][]byte
+
+	// Semaphore
+	semaphoreLock sync.RWMutex
+	semaphore     map[string]*Semaphore
 
 	// Discord chat integration
 	discordSession *discordgo.Session
@@ -61,22 +66,42 @@ func NewServer(config *Config) *Server {
 		sessions:        make(map[net.Conn]*Session),
 		stages:          make(map[string]*Stage),
 		userBinaryParts: make(map[userBinaryPartID][]byte),
+		semaphore:       make(map[string]*Semaphore),
 		discordSession:  nil,
 	}
 
-	// Default town stage that clients try to enter without creating.
-	stage := NewStage("sl1Ns200p0a0u0")
-	s.stages[stage.id] = stage
+	// Mezeporta
+	s.stages["sl1Ns200p0a0u0"] = NewStage("sl1Ns200p0a0u0")
 
-	// Town underground left area -- rasta bar stage (Maybe private bar ID as well?).
-	stage2 := NewStage("sl1Ns211p0a0u0")
-	s.stages[stage2.id] = stage2
+	// Guild Hall LV1
+	s.stages["sl1Ns202p0a0u0"] = NewStage("sl1Ns202p0a0u0")
+
+	// Guild Hall LV2
+	s.stages["sl1Ns203p0a0u0"] = NewStage("sl1Ns203p0a0u0")
+
+	// Guild Hall LV3
+	s.stages["sl1Ns204p0a0u0"] = NewStage("sl1Ns204p0a0u0")
+
+	// Pugi Farm
+	s.stages["sl1Ns205p0a0u0"] = NewStage("sl1Ns205p0a0u0")
+
+	// Rasta bar stage
+	s.stages["sl1Ns211p0a0u0"] = NewStage("sl1Ns211p0a0u0")
+
+	// Carvane
+	s.stages["sl1Ns260p0a0u0"] = NewStage("sl1Ns260p0a0u0")
+
+	// Gook Farm
+	s.stages["sl1Ns265p0a0u0"] = NewStage("sl1Ns265p0a0u0")
 
 	// Diva fountain / prayer fountain.
-	stage3 := NewStage("sl2Ns379p0a0u0")
-	s.stages[stage3.id] = stage3
+	s.stages["sl2Ns379p0a0u0"] = NewStage("sl2Ns379p0a0u0")
 
-	// sl1Ns257p0a0uE31111 -- house for charID E31111.
+	// Diva Hall
+	s.stages["sl1Ns445p0a0u0"] = NewStage("sl1Ns445p0a0u0")
+
+	// MezFes
+	s.stages["sl1Ns462p0a0u0"] = NewStage("sl1Ns462p0a0u0")
 
 	// Create the discord session, (not actually connecting to discord servers yet).
 	if s.erupeConfig.Discord.Enabled {
@@ -92,8 +117,8 @@ func NewServer(config *Config) *Server {
 }
 
 // Start starts the server in a new goroutine.
-func (s *Server) Start() error {
-	l, err := net.Listen("tcp", fmt.Sprintf(":%d", s.erupeConfig.Channel.Port))
+func (s *Server) Start(port int) error {
+	l, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		return err
 	}
@@ -213,21 +238,9 @@ func (s *Server) BroadcastChatMessage(message string) {
 
 	s.BroadcastMHF(&mhfpacket.MsgSysCastedBinary{
 		CharID:         0xFFFFFFFF,
-		Type1:          BinaryMessageTypeChat,
+		MessageType:    BinaryMessageTypeChat,
 		RawDataPayload: bf.Data(),
 	}, nil)
-}
-
-// onDiscordMessage handles receiving messages from discord and forwarding them ingame.
-func (s *Server) onDiscordMessage(ds *discordgo.Session, m *discordgo.MessageCreate) {
-	// Ignore messages from our bot, or ones that are not in the correct channel.
-	if m.Author.ID == ds.State.User.ID || m.ChannelID != s.erupeConfig.Discord.ChannelID {
-		return
-	}
-
-	// Broadcast to the game clients.
-	message := fmt.Sprintf("[DISCORD] %s: %s", m.Author.Username, m.Content)
-	s.BroadcastChatMessage(message)
 }
 
 func (s *Server) FindSessionByCharID(charID uint32) *Session {

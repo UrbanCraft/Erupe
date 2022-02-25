@@ -111,26 +111,64 @@ func main() {
 	logger.Info("Started sign server.")
 
 	// Channel Server
-	channelServer := channelserver.NewServer(
+	channelServer1 := channelserver.NewServer(
 		&channelserver.Config{
 			Logger:      logger.Named("channel"),
 			ErupeConfig: erupeConfig,
 			DB:          db,
 		})
 
-	err = channelServer.Start()
+	err = channelServer1.Start(erupeConfig.Channel.Port1)
 	if err != nil {
-		logger.Fatal("Failed to start channel server", zap.Error(err))
+		logger.Fatal("Failed to start channel server1", zap.Error(err))
 	}
 	logger.Info("Started channel server.")
+	// Channel Server
+	channelServer2 := channelserver.NewServer(
+		&channelserver.Config{
+			Logger:      logger.Named("channel"),
+			ErupeConfig: erupeConfig,
+			DB:          db,
+		})
 
+	err = channelServer2.Start(erupeConfig.Channel.Port2)
+	if err != nil {
+		logger.Fatal("Failed to start channel server2", zap.Error(err))
+	}
+	// Channel Server
+	channelServer3 := channelserver.NewServer(
+		&channelserver.Config{
+			Logger:      logger.Named("channel"),
+			ErupeConfig: erupeConfig,
+			DB:          db,
+		})
+
+	err = channelServer3.Start(erupeConfig.Channel.Port3)
+	if err != nil {
+		logger.Fatal("Failed to start channel server3", zap.Error(err))
+	}
+	// Channel Server
+	channelServer4 := channelserver.NewServer(
+		&channelserver.Config{
+			Logger:      logger.Named("channel"),
+			ErupeConfig: erupeConfig,
+			DB:          db,
+		})
+
+	err = channelServer4.Start(erupeConfig.Channel.Port4)
+	if err != nil {
+		logger.Fatal("Failed to start channel server4", zap.Error(err))
+	}
 	// Wait for exit or interrupt with ctrl+C.
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	<-c
 
 	logger.Info("Trying to shutdown gracefully.")
-	channelServer.Shutdown()
+	channelServer4.Shutdown()
+	channelServer3.Shutdown()
+	channelServer2.Shutdown()
+	channelServer1.Shutdown()
 	signServer.Shutdown()
 	entranceServer.Shutdown()
 	launcherServer.Shutdown()

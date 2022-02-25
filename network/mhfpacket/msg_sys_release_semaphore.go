@@ -10,7 +10,7 @@ import (
 
 // MsgSysReleaseSemaphore represents the MSG_SYS_RELEASE_SEMAPHORE
 type MsgSysReleaseSemaphore struct {
-	Unk0 uint32
+	AckHandle uint32
 }
 
 // Opcode returns the ID associated with this packet type.
@@ -20,7 +20,7 @@ func (m *MsgSysReleaseSemaphore) Opcode() network.PacketID {
 
 // Parse parses the packet from binary
 func (m *MsgSysReleaseSemaphore) Parse(bf *byteframe.ByteFrame, ctx *clientctx.ClientContext) error {
-	m.Unk0 = bf.ReadUint32()
+	m.AckHandle = bf.ReadUint32()
 	return nil
 }
 

@@ -13,10 +13,10 @@ Currently allows a JP MHF client (with GameGuard removed) to:
 * Do quests (Only quests shipped with the game are on the counter. **Requires binary quest files not in the repo**)
 * Use (local) chat*
 * Partial guild support
+* Do quests
+* Use chat*
 
 ### All features can be assumed to be very limited or buggy.
-
-
 
 # Installation
 ## Server
@@ -69,6 +69,7 @@ Then, modify the the `/launcher/js/launcher.js` file as such:
 Finally, edit the config.json and set `UseOriginalLauncherFiles` to `true` under the launcher settings.
 
 # Usage
+### Note: If you are switching to/from the custom launcher html, you will have to clear your IE cache @ `C:\Users\<user>\AppData\Local\Microsoft\Windows\INetCache`.
 
 ## Server
 ```

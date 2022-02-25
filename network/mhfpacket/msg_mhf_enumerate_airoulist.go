@@ -9,7 +9,9 @@ import (
 )
 
 // MsgMhfEnumerateAiroulist represents the MSG_MHF_ENUMERATE_AIROULIST
-type MsgMhfEnumerateAiroulist struct{}
+type MsgMhfEnumerateAiroulist struct {
+	AckHandle uint32
+}
 
 // Opcode returns the ID associated with this packet type.
 func (m *MsgMhfEnumerateAiroulist) Opcode() network.PacketID {
@@ -18,7 +20,8 @@ func (m *MsgMhfEnumerateAiroulist) Opcode() network.PacketID {
 
 // Parse parses the packet from binary
 func (m *MsgMhfEnumerateAiroulist) Parse(bf *byteframe.ByteFrame, ctx *clientctx.ClientContext) error {
-	return errors.New("Not implemented")
+	m.AckHandle = bf.ReadUint32()
+	return nil
 }
 
 // Build builds a binary packet from the current data.

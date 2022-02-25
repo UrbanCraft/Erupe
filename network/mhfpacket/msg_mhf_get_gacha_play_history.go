@@ -9,7 +9,10 @@ import (
 )
 
 // MsgMhfGetGachaPlayHistory represents the MSG_MHF_GET_GACHA_PLAY_HISTORY
-type MsgMhfGetGachaPlayHistory struct{}
+type MsgMhfGetGachaPlayHistory struct{
+	AckHandle uint32
+	GachaHash uint32
+}
 
 // Opcode returns the ID associated with this packet type.
 func (m *MsgMhfGetGachaPlayHistory) Opcode() network.PacketID {
@@ -18,7 +21,9 @@ func (m *MsgMhfGetGachaPlayHistory) Opcode() network.PacketID {
 
 // Parse parses the packet from binary
 func (m *MsgMhfGetGachaPlayHistory) Parse(bf *byteframe.ByteFrame, ctx *clientctx.ClientContext) error {
-	return errors.New("Not implemented")
+	m.AckHandle = bf.ReadUint32()
+	m.GachaHash = bf.ReadUint32()
+	return nil
 }
 
 // Build builds a binary packet from the current data.

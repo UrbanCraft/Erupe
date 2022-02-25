@@ -9,6 +9,7 @@ import (
 	"github.com/Andoryuuta/Erupe/network"
 	"github.com/Andoryuuta/byteframe"
 	"go.uber.org/zap"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // Session holds state for the sign server connection.
@@ -120,7 +121,7 @@ func (s *Session) handleDSGNRequest(bf *byteframe.ByteFrame) error {
 		s.logger.Warn("Got error on SQL query", zap.Error(err))
 		break
 	default:
-		if reqPassword == password {
+		if bcrypt.CompareHashAndPassword([]byte(password), []byte(reqPassword)) == nil {
 			s.logger.Info("Passwords match!")
 			serverRespBytes = s.makeSignInResp(id)
 		} else {

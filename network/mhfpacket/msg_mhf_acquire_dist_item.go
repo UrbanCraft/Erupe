@@ -9,7 +9,6 @@ import (
 // MsgMhfAcquireDistItem represents the MSG_MHF_ACQUIRE_DIST_ITEM
 type MsgMhfAcquireDistItem struct {
 	AckHandle uint32
-
 	// Valid field size(s), not sure about the types.
 	Unk0 uint8
 	Unk1 uint32

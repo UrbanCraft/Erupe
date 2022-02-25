@@ -15,7 +15,6 @@ type scenarioFileIdentifer struct {
 	ChapterID  uint8
 	/*
 		Flags represent the following bit flags:
-
 		11111111 -> Least significant bit on the right.
 		||||||||
 		|||||||0x1: Chunk0-type, recursive chunks, quest name/description + 0x14 byte unk info

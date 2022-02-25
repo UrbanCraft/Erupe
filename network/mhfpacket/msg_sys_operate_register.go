@@ -12,6 +12,7 @@ import (
 type MsgSysOperateRegister struct {
 	AckHandle      uint32
 	RegisterID     uint32
+	fixedZero      uint16
 	RawDataPayload []byte
 }
 
@@ -24,16 +25,14 @@ func (m *MsgSysOperateRegister) Opcode() network.PacketID {
 func (m *MsgSysOperateRegister) Parse(bf *byteframe.ByteFrame, ctx *clientctx.ClientContext) error {
 	m.AckHandle = bf.ReadUint32()
 	m.RegisterID = bf.ReadUint32()
-	fixedZero := bf.ReadUint16()
+	m.fixedZero = bf.ReadUint16()
 
-	// TODO(Andoryuuta): Remove after real-world verification.
-	if fixedZero != 0 {
-		return fmt.Errorf("Expected fixed-0 values, got %d", fixedZero)
+	if m.fixedZero != 0 {
+		return fmt.Errorf("expected fixed-0 values, got %d", m.fixedZero)
 	}
 
 	dataSize := bf.ReadUint16()
 	m.RawDataPayload = bf.ReadBytes(uint(dataSize))
-
 	return nil
 }
 

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/binary"
 
+	"github.com/Andoryuuta/Erupe/network/mhfpacket"
 	"github.com/Andoryuuta/Erupe/server/channelserver/compression/nullcomp"
 	"go.uber.org/zap"
 )
@@ -14,6 +15,7 @@ const (
 
 type CharacterSaveData struct {
 	CharID         uint32
+	Name           string
 	RP             uint16
 	IsNewCharacter bool
 
@@ -22,17 +24,10 @@ type CharacterSaveData struct {
 }
 
 func GetCharacterSaveData(s *Session, charID uint32) (*CharacterSaveData, error) {
-	result, err := s.server.db.Query(
-		"SELECT id, savedata, is_new_character FROM characters WHERE id = $1",
-		charID,
-	)
+	result, err := s.server.db.Query("SELECT id, savedata, is_new_character, name FROM characters WHERE id = $1", charID)
 
 	if err != nil {
-		s.logger.Error(
-			"failed to retrieve save data for character",
-			zap.Error(err),
-			zap.Uint32("charID", charID),
-		)
+		s.logger.Error("failed to retrieve save data for character", zap.Error(err), zap.Uint32("charID", charID))
 		return nil, err
 	}
 
@@ -42,14 +37,11 @@ func GetCharacterSaveData(s *Session, charID uint32) (*CharacterSaveData, error)
 	var compressedBaseSave []byte
 
 	if !result.Next() {
-		s.logger.Error(
-			"no results found for character save data",
-			zap.Uint32("charID", charID),
-		)
+		s.logger.Error("no results found for character save data", zap.Uint32("charID", charID))
 		return nil, err
 	}
 
-	err = result.Scan(&saveData.CharID, &compressedBaseSave, &saveData.IsNewCharacter)
+	err = result.Scan(&saveData.CharID, &compressedBaseSave, &saveData.IsNewCharacter, &saveData.Name)
 
 	if err != nil {
 		s.logger.Error(
@@ -87,23 +79,17 @@ func (save *CharacterSaveData) Save(s *Session, transaction *sql.Tx) error {
 		return err
 	}
 
-	updateSQL := `
-		UPDATE characters 
-			SET savedata=$1, is_new_character=$3
-		WHERE id=$2
-	`
+	updateSQL := "UPDATE characters	SET savedata=$1, is_new_character=$3 WHERE id=$2"
 
 	if transaction != nil {
 		_, err = transaction.Exec(updateSQL, compressedData, save.CharID, save.IsNewCharacter)
 	} else {
 		_, err = s.server.db.Exec(updateSQL, compressedData, save.CharID, save.IsNewCharacter)
 	}
-
 	if err != nil {
 		s.logger.Error("failed to save character data", zap.Error(err), zap.Uint32("charID", save.CharID))
 		return err
 	}
-
 	return nil
 }
 
@@ -114,7 +100,6 @@ func (save *CharacterSaveData) CompressedBaseData(s *Session) ([]byte, error) {
 		s.logger.Error("failed to compress saveData", zap.Error(err), zap.Uint32("charID", save.CharID))
 		return nil, err
 	}
-
 	return compressedData, nil
 }
 
@@ -139,4 +124,20 @@ func (save *CharacterSaveData) updateSaveDataWithStruct() {
 // This will update the character save struct with the values stored in the raw savedata arrays
 func (save *CharacterSaveData) updateStructWithSaveData() {
 	save.RP = binary.LittleEndian.Uint16(save.baseSaveData[CharacterSaveRPPointer : CharacterSaveRPPointer+2])
+}
+
+func handleMsgMhfSexChanger(s *Session, p mhfpacket.MHFPacket) {
+	pkt := p.(*mhfpacket.MsgMhfSexChanger)
+	if pkt.Gender == 0 {
+		_, err := s.server.db.Exec("UPDATE characters SET is_female=true WHERE id=$1", s.charID)
+		if err != nil {
+			s.logger.Fatal("Failed to update gender in db", zap.Error(err))
+		}
+	} else {
+		_, err := s.server.db.Exec("UPDATE characters SET is_female=false WHERE id=$1", s.charID)
+		if err != nil {
+			s.logger.Fatal("Failed to update gender in db", zap.Error(err))
+		}
+	}
+	doAckSimpleSucceed(s, pkt.AckHandle, []byte{0x00, 0x00, 0x00, 0x00})
 }

@@ -9,7 +9,10 @@ import (
 )
 
 // MsgMhfResetBoxGachaInfo represents the MSG_MHF_RESET_BOX_GACHA_INFO
-type MsgMhfResetBoxGachaInfo struct{}
+type MsgMhfResetBoxGachaInfo struct{
+	AckHandle uint32
+	GachaHash uint32
+}
 
 // Opcode returns the ID associated with this packet type.
 func (m *MsgMhfResetBoxGachaInfo) Opcode() network.PacketID {
@@ -18,7 +21,9 @@ func (m *MsgMhfResetBoxGachaInfo) Opcode() network.PacketID {
 
 // Parse parses the packet from binary
 func (m *MsgMhfResetBoxGachaInfo) Parse(bf *byteframe.ByteFrame, ctx *clientctx.ClientContext) error {
-	return errors.New("Not implemented")
+	m.AckHandle = bf.ReadUint32()
+	m.GachaHash = bf.ReadUint32()
+	return nil
 }
 
 // Build builds a binary packet from the current data.

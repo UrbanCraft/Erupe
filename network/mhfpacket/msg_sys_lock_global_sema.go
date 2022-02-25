@@ -11,7 +11,9 @@ import (
 // MsgSysLockGlobalSema represents the MSG_SYS_LOCK_GLOBAL_SEMA
 type MsgSysLockGlobalSema struct {
 	AckHandle             uint32
-	UnkIDString0          string
+	UserIDLength					uint16
+	ServerChannelIDLength	uint16
+	UserIDString          string
 	ServerChannelIDString string
 }
 
@@ -23,13 +25,10 @@ func (m *MsgSysLockGlobalSema) Opcode() network.PacketID {
 // Parse parses the packet from binary
 func (m *MsgSysLockGlobalSema) Parse(bf *byteframe.ByteFrame, ctx *clientctx.ClientContext) error {
 	m.AckHandle = bf.ReadUint32()
-
-	stageNameLength := bf.ReadUint16()
-	serverIDLength := bf.ReadUint16()
-
-	m.UnkIDString0 = string(bf.ReadBytes(uint(stageNameLength)))
-	m.ServerChannelIDString = string(bf.ReadBytes(uint(serverIDLength)))
-
+	m.UserIDLength = bf.ReadUint16()
+	m.ServerChannelIDLength = bf.ReadUint16()
+	m.UserIDString = string(bf.ReadBytes(uint(m.UserIDLength)))
+	m.ServerChannelIDString = string(bf.ReadBytes(uint(m.ServerChannelIDLength)))
 	return nil
 }
 

@@ -24,10 +24,13 @@ type Config struct {
 
 // DevModeOptions holds various debug/temporary options for use while developing Erupe.
 type DevModeOptions struct {
-	CleanDB             bool // Automatically wipes the DB on server reset.
-	MaxLauncherHR       bool // Sets the HR returned in the launcher to HR9 so that you can join non-beginner worlds.
-	FixedStageID        bool // Causes all move_stage to use the ID sl1Ns200p0a0u0 to get you into all stages
-	LogOutboundMessages bool // Log all messages sent to the clients
+	ServerName          string // To get specific instance server about (Current Players/Event Week)
+	CleanDB             bool   // Automatically wipes the DB on server reset.
+	MaxLauncherHR       bool   // Sets the HR returned in the launcher to HR9 so that you can join non-beginner worlds.
+	FixedStageID        bool   // Causes all move_stage to use the ID sl1Ns200p0a0u0 to get you into all stages
+	LogOutboundMessages bool   // Log all messages sent to the clients
+	Event               int    // Changes the current event
+	OpcodeMessages      bool   // Get all message for Opcodes
 	SaveDumps           SaveDumpOptions
 }
 
@@ -65,7 +68,10 @@ type Sign struct {
 
 // Channel holds the channel server config.
 type Channel struct {
-	Port int
+	Port1 int
+	Port2 int
+	Port3 int
+	Port4 int
 }
 
 // Entrance holds the entrance server config.

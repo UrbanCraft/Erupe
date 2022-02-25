@@ -36,5 +36,5 @@ func (m *MsgSysWaitStageBinary) Parse(bf *byteframe.ByteFrame, ctx *clientctx.Cl
 
 // Build builds a binary packet from the current data.
 func (m *MsgSysWaitStageBinary) Build(bf *byteframe.ByteFrame, ctx *clientctx.ClientContext) error {
-	return errors.New("Not implemented")
+	panic("Not implemented")
 }

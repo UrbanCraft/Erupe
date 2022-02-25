@@ -16,6 +16,7 @@ func (m *MsgSysStageDestruct) Opcode() network.PacketID {
 
 // Parse parses the packet from binary
 func (m *MsgSysStageDestruct) Parse(bf *byteframe.ByteFrame, ctx *clientctx.ClientContext) error {
+	// No data other than opcode
 	return nil
 }
 

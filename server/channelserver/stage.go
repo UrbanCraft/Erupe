@@ -31,7 +31,7 @@ type Stage struct {
 	// Total count of objects ever created for this stage. Used for ObjID generation.
 	gameObjectCount uint32
 
-	// Map of ObjID -> StageObject
+	// Save all object in stage
 	objects map[uint32]*StageObject
 
 	// Map of session -> charID.
@@ -55,14 +55,13 @@ type Stage struct {
 func NewStage(ID string) *Stage {
 	s := &Stage{
 		id:                  ID,
-		objects:             make(map[uint32]*StageObject),
 		clients:             make(map[*Session]uint32),
 		reservedClientSlots: make(map[uint32]interface{}),
+		objects:             make(map[uint32]*StageObject),
 		rawBinaryData:       make(map[stageBinaryKey][]byte),
 		maxPlayers:          4,
 		gameObjectCount:     1,
 	}
-
 	return s
 }
 

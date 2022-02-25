@@ -10,7 +10,7 @@ import (
 
 // MsgSysDeleteSemaphore represents the MSG_SYS_DELETE_SEMAPHORE
 type MsgSysDeleteSemaphore struct {
-	Unk0 uint32
+	AckHandle uint32
 }
 
 // Opcode returns the ID associated with this packet type.
@@ -20,7 +20,7 @@ func (m *MsgSysDeleteSemaphore) Opcode() network.PacketID {
 
 // Parse parses the packet from binary
 func (m *MsgSysDeleteSemaphore) Parse(bf *byteframe.ByteFrame, ctx *clientctx.ClientContext) error {
-	m.Unk0 = bf.ReadUint32()
+	m.AckHandle = bf.ReadUint32()
 	return nil
 }
 
