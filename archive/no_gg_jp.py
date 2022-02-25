@@ -11,7 +11,8 @@ Usage:
 
 import frida
 import time
-import sys
+import psutil
+
 def getServerAddress():
     try:
         with open("SERVER", "r") as fh:
@@ -159,7 +160,7 @@ def main():
                 var mhfMod = Process.getModuleByName('mhf.exe');
                 var ggInitFuncResults = Memory.scanSync(mhfMod.base, mhfMod.size, "55 8B EC 81 EC 04 01 00 00");
                 if(ggInitFuncResults.length < 1) {
-                    //console.log("Failed to find gameguard init function");
+                    console.log("Failed to find gameguard init function");
                     return;
                 } else {
 
@@ -255,8 +256,12 @@ def main():
     
     frida.resume(pID)
 
-    print("[!] Ctrl+D on UNIX, Ctrl+Z on Windows/cmd.exe to detach from instrumented program.\n\n")
-    sys.stdin.read()
+    # Wait for game to exit
+    while psutil.pid_exists(pID):
+        time.sleep(1)
+
+    print("Game closed, exiting...")
+
     session.detach()
 
 if __name__ == '__main__':
