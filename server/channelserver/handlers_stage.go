@@ -165,11 +165,20 @@ func removeSessionFromStage(s *Session) {
 			delete(s.stage.objects, objID)
 		}
 	}
+	for objListID, stageObjectList := range s.stage.objectList {
+		if stageObjectList.charid == s.charID {
+			//Added to prevent duplicates from flooding ObjectMap and causing server hangs
+			s.stage.objectList[objListID].status=false
+			s.stage.objectList[objListID].charid=0
+			}
+		}
 }
+
 
 func handleMsgSysEnterStage(s *Session, p mhfpacket.MHFPacket) {
 	pkt := p.(*mhfpacket.MsgSysEnterStage)
 
+	fmt.Printf("The Stage is %s\n",pkt.StageID)
 	// Push our current stage ID to the movement stack before entering another one.
 	s.Lock()
 	s.stageMoveStack.Push(s.stageID)

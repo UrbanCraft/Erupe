@@ -9,7 +9,11 @@
         "maxlauncherhr": true,
         "LogOutboundMessages": false,
 		"Event": 0, 
-        "OpcodeMessages": false
+        "OpcodeMessages": false,
+		"SaveDumps": {
+			"Enabled": true,
+			"OutputDir": "savedata"
+		}
 		
     },
 
