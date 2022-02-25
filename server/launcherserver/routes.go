@@ -22,7 +22,7 @@ func serverUniqueName(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, `<?xml version="1.0" encoding="ISO-8859-1"?><uniq code="200">OK</uniq>`)
 }
 
-func jpLogin(w http.ResponseWriter, r *http.Request) {
+func jpLogin(s *Server, w http.ResponseWriter, r *http.Request) {
 	// HACK(Andoryuuta): Return the given password back as the `skey` to defer the login logic to the sign server.
 	resultJSON := fmt.Sprintf(`{"result": "Ok", "skey": "%s", "code": "000", "msg": ""}`, r.FormValue("pw"))
 
@@ -32,48 +32,40 @@ func jpLogin(w http.ResponseWriter, r *http.Request) {
 		<body onload="doPost();">
 		<script type="text/javascript">
 		function doPost(){
-			parent.postMessage(document.getElementById("result").getAttribute("value"), "http://cog-members.mhf-z.jp");
+			parent.postMessage(document.getElementById("result").getAttribute("value"), "http://%s");
 		}
 		</script>
 		<input id="result" value="%s"/>
 		</body>
-		</html>`, html.EscapeString(resultJSON))
+		</html>`, s.erupeConfig.HostIP, html.EscapeString(resultJSON))
 
 }
 
 func (s *Server) setupServerlistRoutes(r *mux.Router) {
 	// TW
-	twServerList := r.Host("mhf-n.capcom.com.tw").Subrouter()
-	twServerList.HandleFunc("/server/unique.php", serverUniqueName) // Name checking is also done on this host.
-	twServerList.Handle("/server/serverlist.xml", ServerHandlerFunc{s, serverList})
+	r.HandleFunc("/server/unique.php", serverUniqueName) // Name checking is also done on this host.
+	r.Handle("/server/serverlist.xml", ServerHandlerFunc{s, serverList})
 
 	// JP
-	jpServerList := r.Host("srv-mhf.capcom-networks.jp").Subrouter()
-	jpServerList.Handle("/serverlist.xml", ServerHandlerFunc{s, serverList})
+	r.Handle("/serverlist.xml", ServerHandlerFunc{s, serverList})
 }
 
 func (s *Server) setupOriginalLauncherRoutes(r *mux.Router) {
 	// TW
-	twMain := r.Host("mhfg.capcom.com.tw").Subrouter()
-	twMain.PathPrefix("/").Handler(http.FileServer(http.Dir("./www/tw/")))
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./www/tw/")))
 
 	// JP
-	jpMain := r.Host("cog-members.mhf-z.jp").Subrouter()
-	jpMain.PathPrefix("/").Handler(http.FileServer(http.Dir("./www/jp/")))
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./www/jp/")))
 
 	// JP Launcher does additional auth over HTTP that the TW launcher doesn't.
-	jpAuth := r.Host("www.capcom-onlinegames.jp").Subrouter()
-	jpAuth.HandleFunc("/auth/launcher/login", jpLogin) //.Methods("POST")
-	jpAuth.PathPrefix("/auth/").Handler(http.StripPrefix("/auth/", http.FileServer(http.Dir("./www/jp/auth/"))))
-
+	r.Handle("/auth/launcher/login", ServerHandlerFunc{s, jpLogin}) //.Methods("POST")
+	r.PathPrefix("/auth/").Handler(http.StripPrefix("/auth/", http.FileServer(http.Dir("./www/jp/auth/"))))
 }
 
 func (s *Server) setupCustomLauncherRoutes(r *mux.Router) {
 	// TW
-	twMain := r.Host("mhfg.capcom.com.tw").Subrouter()
-	twMain.PathPrefix("/g6_launcher/").Handler(http.StripPrefix("/g6_launcher/", http.FileServer(http.Dir("./www/erupe/"))))
+	r.PathPrefix("/g6_launcher/").Handler(http.StripPrefix("/g6_launcher/", http.FileServer(http.Dir("./www/erupe/"))))
 
 	// JP
-	jpMain := r.Host("cog-members.mhf-z.jp").Subrouter()
-	jpMain.PathPrefix("/launcher/").Handler(http.StripPrefix("/launcher/", http.FileServer(http.Dir("./www/erupe"))))
+	r.PathPrefix("/launcher/").Handler(http.StripPrefix("/launcher/", http.FileServer(http.Dir("./www/erupe"))))
 }

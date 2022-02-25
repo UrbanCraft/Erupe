@@ -12,45 +12,141 @@ Usage:
 import frida
 import time
 import sys
+def getServerAddress():
+    try:
+        with open("SERVER", "r") as fh:
+            return fh.read()
+
+    except Exception:
+        return "127.0.0.1"
 
 def main():
     executable_name = "mhf.exe"
+    serverAddress = getServerAddress()
     pID = frida.spawn(executable_name)
     session = frida.attach(pID)
 
-    script = session.create_script("""
+    print(f"Connecting to server at {serverAddress}")
 
-    /*
+    script = session.create_script(f"""
+    var serverAddress = "{serverAddress}";
+
+    """ + """
+
+    var redirectedHosts = [
+        "mhfg.capcom.com.tw",
+        "mhf-n.capcom.com.tw",
+        "cog-members.mhf-z.jp",
+        "www.capcom-onlinegames.jp",
+        "srv-mhf.capcom-networks.jp",
+        "mhf-z.jp"
+    ]
+
+    function shouldRedirectHost(name) {
+        return redirectedHosts.includes(name);
+    }
+
+    //Intercept network requests without HOSTS file
     Interceptor.attach(Module.findExportByName("ws2_32.dll", "gethostbyname"), {
         onEnter: function(args) {
-            var name = args[0];
-            console.log("gethostbyname");
-            console.log(name.readCString());
+            var namePointer = args[0];
+            var name = namePointer.readCString();
+
+            if (shouldRedirectHost(name)) {
+                namePointer.writeUtf8String(serverAddress);
+
+                console.log(`Redirecting gethostbyname from ${name} -> ${serverAddress}`);
+            }
+        }
+    });
+
+    Interceptor.attach(Module.findExportByName("ws2_32.dll", "inet_addr"), {
+        onEnter: function(args) {
+            var namePointer = args[0];
+            var name = namePointer.readCString();
+
+            if (shouldRedirectHost(name)) {
+                namePointer.writeUtf8String(serverAddress);
+
+                console.log(`Redirecting inet_addr from ${name} -> ${serverAddress}`);
+            }
+        }
+    });
+
+    Interceptor.attach(Module.findExportByName("ws2_32.dll", "GetAddrInfoExW"), {
+        onEnter: function(args) {
+            var namePointer = args[0];
+            var name = namePointer.readUtf16String();
+
+            if (shouldRedirectHost(name)) {
+                namePointer.writeUtf16String(serverAddress);
+
+                console.log(`Redirecting GetAddrInfoExW from ${name} -> ${serverAddress}`);
+            }
+        }
+    });
+/*
+    Interceptor.attach(Module.findExportByName("ws2_32.dll", "GetAddrInfoExA"), {
+        onEnter: function(args) {
+            console.log("GetAddrInfoExA OnEnter")
+            var namePointer = args[0];
+            var name = namePointer.readCString();
+
+            if (shouldRedirectHost(name)) {
+                namePointer.writeUtf8String(serverAddress);
+
+                console.log(`Redirecting GetAddrInfoExA from ${name} -> ${serverAddress}`);
+            }
+        }
+    });
+*/
+    
+    Interceptor.attach(Module.findExportByName("ws2_32.dll", "getaddrinfo"), {
+        onEnter: function(args) {
+            console.log("getaddrinfo OnEnter")
+            var namePointer = args[0];
+            var name = namePointer.readCString();
+
+            if (shouldRedirectHost(name)) {
+                namePointer.writeUtf8String(serverAddress);
+
+                console.log(`Redirecting getaddrinfo from ${name} -> ${serverAddress}`);
+            }
+        }
+    });
+    
+
+    // Hook listing
+    /*
+    Process.enumerateModules({
+        onMatch: function(module){
+            console.log('Module name: ' + module.name + " - " + "Base Address: " + module.base.toString());
         },
-        onLeave: function(retval) {
-            
-            console.log("OnLeave", retval);
-            console.log(hexdump(retval, {
-                offset: 0,
-                length: 64,
-            }));
-            console.log("h_name" + retval.readPointer().readCString());
-            console.log("h_aliases_start" + retval.add(4).readPointer());
-            
-            console.log("h_addrtype" + retval.add(8).readU16());
-            console.log("h_length" + retval.add(10).readU16());
-            
-            console.log("ip ptr 0 " + retval.add(12).readPointer().add(0).readU32());
-            console.log("ip ptr 1 " + retval.add(12).readPointer().add(4).readU32());
-            console.log("ip " + retval.add(12).readPointer().add(0).readPointer().readU32());
-            
-            retval.add(12).readPointer().readPointer().writeU32(16777343);
-            retval.add(12).readPointer().add(4).writeU32(0);
+        onComplete: function(){}
+    });
 
-            console.log("ip ptr 0 " + retval.add(12).readPointer().add(0).readU32());
-            console.log("ip ptr 1 " + retval.add(12).readPointer().add(4).readU32());
-            console.log("ip " + retval.add(12).readPointer().add(0).readPointer().readU32());
+    var moduleTarget = "ws2_32.dll";
+    var methodBlacklist = [
+        "WSAGetLastError",
+        "WSASetLastError",
+    ]
 
+    Module.enumerateExportsSync(moduleTarget).forEach(function(e) {
+        if (methodBlacklist.includes(e.name)) {
+            console.log("Skipping");
+            return;
+        }
+
+        try {
+            Interceptor.attach(Module.findExportByName(moduleTarget, e.name), {
+                onEnter: function(args) {
+                    //console.log(moduleTarget + " " + e.name);
+                    //Thread.sleep(0.75);
+                }
+            })
+        } catch (e) {
+            console.log(moduleTarget, e.name)
+            console.log(e);
         }
     });
     */
@@ -117,7 +213,39 @@ def main():
             }
         }
     });
-    
+
+    // Waits for the mhfo-hd.dll module to be loaded and unpacked.
+    // this works by hooking user32.dll$RegisterClassExA and waiting for
+    // the mhfo-hd.dll module to register the " M H F " class.
+    var mhfoHDRegisterClassExAHook = Interceptor.attach(Module.findExportByName("user32.dll", "RegisterClassExA"), {
+        onEnter: function(args) {
+            var wndClassExA = args[0];
+            var lpszClassName = wndClassExA.add(0x28).readPointer();
+            var classNameStr = lpszClassName.readCString();
+            var match = classNameStr == " M H F ";
+            if(match) {
+                console.log("mhfo-hd.dll unpacked.");
+                var mhfoMod = Process.getModuleByName('mhfo-hd.dll');
+                var ggCheckFuncResults = Memory.scanSync(mhfoMod.base, mhfoMod.size, "A1 ?? ?? ?? ?? 48 A3 ?? ?? ?? ?? 85 C0 7F 32");
+                if(ggCheckFuncResults.length >= 1) {
+                    console.log("Found GG check function in mhfo-hd.dll. Patching...");
+
+                    var ggCheckFunc = ggCheckFuncResults[0].address;
+                    Memory.patchCode(ggCheckFunc, 64, function (code) {
+                        var cw = new X86Writer(code, { pc: ggCheckFunc });
+                        cw.putMovRegU32('eax', 1);
+                        cw.putRet();
+                        cw.flush();
+                    });
+
+                    console.log("Patch complete.");
+                    console.log("All patches are complete, you can now exit this frida script.");
+                    mhfoHDRegisterClassExAHook.detach();
+                }
+
+            }
+        }
+    });
 """)
     def on_message(message, data):
         print("[{}] => {}".format(message, data))
