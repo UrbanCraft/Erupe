@@ -81,7 +81,7 @@ func (s *Session) handleDSGNRequest(bf *byteframe.ByteFrame) error {
 	s.server.logger.Info(
 		"Got sign in request",
 		zap.String("reqUsername", reqUsername),
-		zap.String("reqPassword", reqPassword),
+		//zap.String("reqPassword", reqPassword),
 		zap.String("reqUnk", reqUnk),
 	)
 
@@ -99,7 +99,10 @@ func (s *Session) handleDSGNRequest(bf *byteframe.ByteFrame) error {
 		serverRespBytes = makeSignInFailureResp(SIGN_EAUTH)
 
 		// HACK(Andoryuuta): Create a new account if it doesn't exit.
-		s.logger.Info("Creating account", zap.String("reqUsername", reqUsername), zap.String("reqPassword", reqPassword))
+		s.logger.Info("Creating account",
+			zap.String("reqUsername", reqUsername),
+			//zap.String("reqPassword", reqPassword),
+		)
 		err = s.server.registerDBAccount(reqUsername, reqPassword)
 		if err != nil {
 			s.logger.Info("Error on creating new account", zap.Error(err))
