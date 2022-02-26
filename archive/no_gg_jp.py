@@ -16,7 +16,7 @@ import psutil
 def getServerAddress():
     try:
         with open("SERVER", "r") as fh:
-            return fh.read()
+            return fh.read().strip()
 
     except Exception:
         return "127.0.0.1"
@@ -101,7 +101,7 @@ def main():
         }
     });
 */
-    
+
     Interceptor.attach(Module.findExportByName("ws2_32.dll", "getaddrinfo"), {
         onEnter: function(args) {
             console.log("getaddrinfo OnEnter")
@@ -115,7 +115,7 @@ def main():
             }
         }
     });
-    
+
 
     // Hook listing
     /*
@@ -253,7 +253,7 @@ def main():
 
     script.on('message', on_message)
     script.load()
-    
+
     frida.resume(pID)
 
     # Wait for game to exit
