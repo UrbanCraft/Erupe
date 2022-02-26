@@ -57,19 +57,20 @@ func handleMsgMhfSavedata(s *Session, p mhfpacket.MHFPacket) {
 	// Temporary server launcher response stuff
 	// 0x1F715	Weapon Class
 	// 0x1FDF6 HR (small_gr_level)
-	// 0x88 Character Name
-	_, err = s.server.db.Exec("UPDATE characters SET weapon=$1 WHERE id=$2", uint16(decompressedData[128789]), s.charID)
+	// 0x58 Character Name Start
+	// 0x64 Character Name End
+	_, err = s.server.db.Exec("UPDATE characters SET weapon=$1 WHERE id=$2", uint16(decompressedData[0x1F715]), s.charID)
 	if err != nil {
 		s.logger.Fatal("Failed to character weapon in db", zap.Error(err))
 	}
-	gr := uint16(decompressedData[130550])<<8 | uint16(decompressedData[130551])
+	gr := uint16(decompressedData[0x1FDF6])<<8 | uint16(decompressedData[0x1FDF7])
 	s.logger.Info("Setting db field", zap.Uint16("gr_override_level", gr))
 	// We have to use `gr_override_level` (uint16), not `small_gr_level` (uint8) to store this.
 	_, err = s.server.db.Exec("UPDATE characters SET gr_override_mode=true, gr_override_level=$1 WHERE id=$2", gr, s.charID)
 	if err != nil {
 		s.logger.Fatal("Failed to update character gr_override_level in db", zap.Error(err))
 	}
-	characterName := s.clientContext.StrConv.MustDecode(bfutil.UpToNull(decompressedData[88:100]))
+	characterName := s.clientContext.StrConv.MustDecode(bfutil.UpToNull(decompressedData[0x58:0x64]))
 	_, err = s.server.db.Exec("UPDATE characters SET name=$1 WHERE id=$2", characterName, s.charID)
 	if err != nil {
 		s.logger.Fatal("Failed to update character name in db", zap.Error(err))
@@ -115,6 +116,7 @@ func handleMsgMhfLoaddata(s *Session, p mhfpacket.MHFPacket) {
 	if err != nil {
 		s.logger.Fatal("Failed to get savedata from db", zap.Error(err))
 	}
+	s.logger.Info("Loading save data")
 	doAckBufSucceed(s, pkt.AckHandle, data)
 }
 
