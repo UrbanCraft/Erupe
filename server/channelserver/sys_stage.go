@@ -119,6 +119,6 @@ func (s *Stage) GetNewObjectID(CharID uint32) uint32 {
 	bf.WriteUint8(uint8(0))
 	bf.WriteUint8(ObjId)
 	bf.WriteUint16(uint16(0))
-	obj := uint32(bf.Data()[3]) | uint32(bf.Data()[2])<<8 | uint32(bf.Data()[1])<<16 | uint32(bf.Data()[0])<<32
+	obj := uint32(bf.Data()[3]) | uint32(bf.Data()[2])<<8 | uint32(bf.Data()[1])<<16 | uint32(bf.Data()[0])<<24
 	return obj
 }
