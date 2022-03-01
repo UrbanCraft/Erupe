@@ -13,6 +13,7 @@ import frida
 import time
 import psutil
 
+
 def getServerAddress():
     try:
         with open("SERVER", "r") as fh:
@@ -20,6 +21,7 @@ def getServerAddress():
 
     except Exception:
         return "127.0.0.1"
+
 
 def main():
     executable_name = "mhf.exe"
@@ -29,10 +31,12 @@ def main():
 
     print(f"Connecting to server at {serverAddress}")
 
-    script = session.create_script(f"""
+    script = session.create_script(
+        f"""
     var serverAddress = "{serverAddress}";
 
-    """ + """
+    """
+        + """
 
     var redirectedHosts = [
         "mhfg.capcom.com.tw",
@@ -247,11 +251,13 @@ def main():
             }
         }
     });
-""")
+"""
+    )
+
     def on_message(message, data):
         print("[{}] => {}".format(message, data))
 
-    script.on('message', on_message)
+    script.on("message", on_message)
     script.load()
 
     frida.resume(pID)
@@ -264,5 +270,6 @@ def main():
 
     session.detach()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

@@ -1,8 +1,8 @@
 package channelserver
 
 import (
-	"github.com/Andoryuuta/byteframe"
 	"github.com/Andoryuuta/Erupe/network/mhfpacket"
+	"github.com/Andoryuuta/byteframe"
 )
 
 func handleMsgMhfGetAchievement(s *Session, p mhfpacket.MHFPacket) {

@@ -100,7 +100,7 @@ func (m *MsgMhfUpdateGuacot) Build(bf *byteframe.ByteFrame, ctx *clientctx.Clien
 }
 
 func (m *MsgMhfUpdateGuacot) GuacotUpdateEntryToBytes(Entry *GuacotUpdateEntry) []byte {
-	resp:= byteframe.NewByteFrame()
+	resp := byteframe.NewByteFrame()
 	resp.WriteUint32(Entry.Unk0)
 	resp.WriteUint16(Entry.Unk1)
 	resp.WriteUint16(Entry.Unk1)

@@ -2,12 +2,11 @@ package channelserver
 
 import (
 	"fmt"
+	"io"
+	"io/ioutil"
 	"math/rand"
 	"os"
-	"io"
-   	"io/ioutil"
-    "path/filepath"
-
+	"path/filepath"
 
 	"github.com/Andoryuuta/Erupe/network/mhfpacket"
 	"github.com/Andoryuuta/Erupe/server/channelserver/compression/deltacomp"
@@ -15,7 +14,6 @@ import (
 	"github.com/Andoryuuta/byteframe"
 	"go.uber.org/zap"
 )
-
 
 // THERE ARE [PARTENER] [MERCENARY] [OTOMO AIRU]
 
@@ -364,6 +362,5 @@ func GetCatDetails(bf *byteframe.ByteFrame) []CatDefinition {
 	}
 	return cats
 }
-
 
 ///////////////////////////////////////////

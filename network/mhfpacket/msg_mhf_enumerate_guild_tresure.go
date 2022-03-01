@@ -9,10 +9,10 @@ import (
 )
 
 // MsgMhfEnumerateGuildTresure represents the MSG_MHF_ENUMERATE_GUILD_TRESURE
-type MsgMhfEnumerateGuildTresure struct{
-	AckHandle      uint32
-	Unk0           uint16
-	Unk1           uint32
+type MsgMhfEnumerateGuildTresure struct {
+	AckHandle uint32
+	Unk0      uint16
+	Unk1      uint32
 }
 
 // Opcode returns the ID associated with this packet type.

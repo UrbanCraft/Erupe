@@ -9,7 +9,7 @@ import (
 )
 
 // MsgMhfExchangeKouryouPoint represents the MSG_MHF_EXCHANGE_KOURYOU_POINT
-type MsgMhfExchangeKouryouPoint struct{
+type MsgMhfExchangeKouryouPoint struct {
 	AckHandle     uint32
 	KouryouPoints uint32
 }

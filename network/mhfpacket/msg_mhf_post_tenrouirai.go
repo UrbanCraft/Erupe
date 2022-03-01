@@ -9,14 +9,14 @@ import (
 )
 
 // MsgMhfPostTenrouirai represents the MSG_MHF_POST_TENROUIRAI
-type MsgMhfPostTenrouirai struct{
-	AckHandle      uint32
-	Unk0           uint16
-	Unk1           uint32
-	Unk2           uint32
-	Unk3           uint32
-	Unk4           uint32
-	Unk5           uint8
+type MsgMhfPostTenrouirai struct {
+	AckHandle uint32
+	Unk0      uint16
+	Unk1      uint32
+	Unk2      uint32
+	Unk3      uint32
+	Unk4      uint32
+	Unk5      uint8
 }
 
 // Opcode returns the ID associated with this packet type.

@@ -3,8 +3,8 @@ package channelserver
 import (
 	"fmt"
 
-	"github.com/Andoryuuta/byteframe"
 	"github.com/Andoryuuta/Erupe/network/mhfpacket"
+	"github.com/Andoryuuta/byteframe"
 )
 
 func handleMsgSysCreateObject(s *Session, p mhfpacket.MHFPacket) {

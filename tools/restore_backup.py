@@ -1,4 +1,14 @@
-from sqlalchemy import create_engine, ForeignKey, Column, Integer, String, MetaData, Table, LargeBinary, update
+from sqlalchemy import (
+    create_engine,
+    ForeignKey,
+    Column,
+    Integer,
+    String,
+    MetaData,
+    Table,
+    LargeBinary,
+    update,
+)
 from sqlalchemy.ext.declarative import declarative_base
 
 import sys
@@ -8,17 +18,19 @@ import json
 meta = MetaData()
 
 Characters = Table(
-    'characters', meta,
-    Column('id', Integer, primary_key = True),
-    Column('user_id', Integer),
-    Column('name', String),
-    Column('savedata', LargeBinary),
+    "characters",
+    meta,
+    Column("id", Integer, primary_key=True),
+    Column("user_id", Integer),
+    Column("name", String),
+    Column("savedata", LargeBinary),
 )
 
 Users = Table(
-    'users', meta,
-    Column('id', Integer, primary_key = True),
-    Column('username', String),
+    "users",
+    meta,
+    Column("id", Integer, primary_key=True),
+    Column("username", String),
 )
 
 
@@ -44,7 +56,9 @@ def getConnectionString(erupeConfigFilename="config.json"):
 
 
 def updateSaveData(connection, id, data):
-    updateCommand = update(Characters).where(Characters.c.id == id).values(savedata=data)
+    updateCommand = (
+        update(Characters).where(Characters.c.id == id).values(savedata=data)
+    )
 
     connection.execute(updateCommand)
 
@@ -58,7 +72,9 @@ def printCharactersInfo(connection):
     for character in connection.execute(Characters.select()):
         user = getUserRowForCharacter(connection, character)
 
-        print(f"Id: {character.id} - User: {user.username} - Character: {character.name}")
+        print(
+            f"Id: {character.id} - User: {user.username} - Character: {character.name}"
+        )
 
 
 def main():

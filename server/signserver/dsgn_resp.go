@@ -75,8 +75,8 @@ func (s *Session) makeSignInResp(uid int) []byte {
 			bf.SetLE()
 			bf.WriteUint16(char.GROverrideLevel) // GR level override.
 			bf.SetBE()
-			bf.WriteUint8(char.GROverrideUnk0)   // unk
-			bf.WriteUint8(char.GROverrideUnk1)   // unk
+			bf.WriteUint8(char.GROverrideUnk0) // unk
+			bf.WriteUint8(char.GROverrideUnk1) // unk
 		}
 	}
 

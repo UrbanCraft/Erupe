@@ -7,12 +7,12 @@ import (
 	"net"
 	"sync"
 
-	"github.com/Andoryuuta/byteframe"
 	"github.com/Andoryuuta/Erupe/common/stringstack"
 	"github.com/Andoryuuta/Erupe/common/stringsupport"
 	"github.com/Andoryuuta/Erupe/network"
 	"github.com/Andoryuuta/Erupe/network/clientctx"
 	"github.com/Andoryuuta/Erupe/network/mhfpacket"
+	"github.com/Andoryuuta/byteframe"
 	"go.uber.org/zap"
 	"golang.org/x/text/encoding/japanese"
 )

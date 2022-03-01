@@ -9,7 +9,7 @@ import (
 )
 
 // MsgMhfGetBoxGachaInfo represents the MSG_MHF_GET_BOX_GACHA_INFO
-type MsgMhfGetBoxGachaInfo struct{
+type MsgMhfGetBoxGachaInfo struct {
 	AckHandle uint32
 	GachaHash uint32
 }

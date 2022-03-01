@@ -3,14 +3,14 @@ package mhfpacket
 import (
 	"errors"
 
-	"github.com/Andoryuuta/Erupe/network"
 	"github.com/Andoryuuta/Erupe/common/bfutil"
+	"github.com/Andoryuuta/Erupe/network"
 	"github.com/Andoryuuta/Erupe/network/clientctx"
 	"github.com/Andoryuuta/byteframe"
 )
 
 // MsgSysCheckSemaphore represents the MSG_SYS_CHECK_SEMAPHORE
-type MsgSysCheckSemaphore struct{
+type MsgSysCheckSemaphore struct {
 	AckHandle uint32
 	StageID   string
 }

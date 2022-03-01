@@ -9,11 +9,11 @@ import (
 )
 
 // MsgMhfRegistGuildCooking represents the MSG_MHF_REGIST_GUILD_COOKING
-type MsgMhfRegistGuildCooking struct{
-	AckHandle      uint32
-	Unk0           uint32
-	Unk1           uint16
-	Unk2           uint8
+type MsgMhfRegistGuildCooking struct {
+	AckHandle uint32
+	Unk0      uint32
+	Unk1      uint16
+	Unk2      uint8
 }
 
 // Opcode returns the ID associated with this packet type.

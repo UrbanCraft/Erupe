@@ -5,10 +5,10 @@ import (
 	"net"
 	"sync"
 
-	"github.com/Andoryuuta/byteframe"
 	"github.com/Andoryuuta/Erupe/config"
 	"github.com/Andoryuuta/Erupe/network/binpacket"
 	"github.com/Andoryuuta/Erupe/network/mhfpacket"
+	"github.com/Andoryuuta/byteframe"
 	"github.com/bwmarrin/discordgo"
 	"github.com/jmoiron/sqlx"
 	"go.uber.org/zap"

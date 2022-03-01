@@ -9,9 +9,9 @@ import (
 )
 
 // MsgMhfMercenaryHuntdata represents the MSG_MHF_MERCENARY_HUNTDATA
-type MsgMhfMercenaryHuntdata struct{
-		AckHandle      uint32
-		Unk0       uint8
+type MsgMhfMercenaryHuntdata struct {
+	AckHandle uint32
+	Unk0      uint8
 }
 
 // Opcode returns the ID associated with this packet type.

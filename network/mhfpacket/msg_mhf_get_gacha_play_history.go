@@ -9,7 +9,7 @@ import (
 )
 
 // MsgMhfGetGachaPlayHistory represents the MSG_MHF_GET_GACHA_PLAY_HISTORY
-type MsgMhfGetGachaPlayHistory struct{
+type MsgMhfGetGachaPlayHistory struct {
 	AckHandle uint32
 	GachaHash uint32
 }

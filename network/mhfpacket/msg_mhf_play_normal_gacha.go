@@ -9,10 +9,10 @@ import (
 )
 
 // MsgMhfPlayNormalGacha represents the MSG_MHF_PLAY_NORMAL_GACHA
-type MsgMhfPlayNormalGacha struct{
-	AckHandle uint32
-	GachaHash uint32
-	RollType uint8
+type MsgMhfPlayNormalGacha struct {
+	AckHandle    uint32
+	GachaHash    uint32
+	RollType     uint8
 	CurrencyMode uint8
 }
 

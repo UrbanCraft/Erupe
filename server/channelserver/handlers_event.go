@@ -5,9 +5,9 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/Andoryuuta/byteframe"
 	"github.com/Andoryuuta/Erupe/network/mhfpacket"
 	timeServerFix "github.com/Andoryuuta/Erupe/server/channelserver/timeserver"
+	"github.com/Andoryuuta/byteframe"
 )
 
 func handleMsgMhfRegisterEvent(s *Session, p mhfpacket.MHFPacket) {
