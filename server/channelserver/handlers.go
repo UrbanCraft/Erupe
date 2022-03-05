@@ -513,7 +513,7 @@ func handleMsgMhfEnumerateGuacot(s *Session, p mhfpacket.MHFPacket) {
 func handleMsgMhfUpdateGuacot(s *Session, p mhfpacket.MHFPacket) {
 	pkt := p.(*mhfpacket.MsgMhfUpdateGuacot)
 	count := int(pkt.EntryCount)
-	fmt.Printf("liuqiang,handleMsgMhfUpdateGuacot:%d\n", count)
+	fmt.Printf("handleMsgMhfUpdateGuacot:%d\n", count)
 	if count == 0 {
 		_, err := s.server.db.Exec("INSERT INTO gook(id,gook0status,gook1status,gook2status,gook3status,gook4status,gook5status) VALUES($1,bool(false),bool(false),bool(false),bool(false),bool(false),bool(false))", s.charID)
 		if err != nil {
@@ -523,7 +523,7 @@ func handleMsgMhfUpdateGuacot(s *Session, p mhfpacket.MHFPacket) {
 		for i := 0; i < int(pkt.EntryCount); i++ {
 			gookindex := int(pkt.Entries[i].Unk0)
 			buf := pkt.GuacotUpdateEntryToBytes(pkt.Entries[i])
-			//fmt.Printf("liuqiang,gookindex:%d\n", gookindex)
+			//fmt.Printf("gookindex:%d\n", gookindex)
 			switch gookindex {
 			case 0:
 				s.server.db.Exec("UPDATE gook SET gook0 = $1 WHERE id = $2", buf, s.charID)
